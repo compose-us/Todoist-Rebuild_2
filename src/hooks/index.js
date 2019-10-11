@@ -4,9 +4,6 @@ import { firebase } from '../firebase';
 import { collatedTasksExist } from '../helpers';
 
 
-
-
-
 export const useTasks =  selectedProject => {
     const[tasks, setTasks]= useState ([]); 
     const[archivedTasks, setArchivedTasks]= useState ([]); 
@@ -23,20 +20,20 @@ unsubscribe =selectedProject && !collatedTasksExist(selectedProject)
 ?(unsubscribe = unsubscribe.where(
     'date', 
     '==', 
-    moment().formate('DD/MM/YYYY')
+    moment().format('DD/MM/YYYY')
     ))
 :selectedProject ==='INBOX'|| selectedProject === 0
 ? (unsubscribe = unsubscribe.where('date', '==', ''))
 : unsubscribe;
 
 unsubscribe = unsubscribe.onSnapshot(snapshot => {
-    const newTasks = snapshot.docs.map(task ({
+    const newTasks = snapshot.docs.map(task => ({
         id: task.id,
         ...task.data(),
     }));
 
 setTasks(
-    selectedProejct ==='NEXT_7_DAYS'
+    selectedProject ==='NEXT_7_DAYS'
     ? newTasks.filter(
         task => 
         moment(task.date, 'DD-MM-YYYY').diff(moment(), 'days') <= 7 &&
@@ -63,9 +60,9 @@ useEffect(() => {
     .orderBy('projectId')
     .get()
     .then(snapshot => {
-        const allProejcts = snopshot.docs.map(project => ({
+        const allProjects = snapshot.docs.map(project => ({
             ...project.data(),
-            docId:project.id,
+            docId: project.id,
         }));
 
         if(JSON.stringify(allProjects) !==JSON.stringify(projects)) {
